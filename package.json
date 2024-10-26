@@ -1,0 +1,25 @@
+{
+  "private": true,
+  "name": "db-site-framework-test",
+  "version": "0.0.0",
+  "description": "",
+  "workspaces": [
+    "examples/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "prettier . --check && eslint .",
+    "lint:fix": "prettier . --write && eslint . --fix"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@eslint/js": "9.13.0",
+    "eslint": "9.13.0",
+    "eslint-config-prettier": "9.1.0",
+    "globals": "15.11.0",
+    "prettier": "3.3.3",
+    "typescript-eslint": "8.11.0"
+  }
+}
