@@ -1,5 +1,6 @@
 ---
 import { clsx } from "clsx";
+import Icon from "./Icon.astro";
 
 interface MenuItem {
   label: string;
@@ -9,26 +10,64 @@ interface MenuItem {
 interface Props {
   readonly items: MenuItem[];
   readonly direction?: "horizontal" | "vertical";
+  readonly supportMobile?: boolean;
 }
 
-const { items, direction = "horizontal" } = Astro.props;
+const { items, direction = "horizontal", supportMobile } = Astro.props;
+
+const componentId = `menu-${Math.random().toString(36).slice(2, 11)}`;
+const menuCollapseId = `${componentId}-menu`;
 ---
 
-<nav class={clsx("menu", { isVertical: direction === "vertical" })}>
+<nav
+  id={componentId}
+  class={clsx("menu", { isVertical: direction === "vertical", supportMobile })}
+>
   {
-    items.map((item) => (
-      <a class="item" href={item.href}>
-        {item.label}
-      </a>
-    ))
+    supportMobile && (
+      <button
+        type="button"
+        aria-expanded="false"
+        aria-controls={menuCollapseId}
+        class="menu-button"
+      >
+        <Icon icon="menu" label="Toggle menu" size="md" />
+      </button>
+    )
   }
+  <div id={menuCollapseId} class="menu-container">
+    <button
+      type="button"
+      aria-expanded="false"
+      aria-controls={menuCollapseId}
+      class="close-button"
+    >
+      <Icon icon="close" label="Toggle menu" size="md" />
+    </button>
+    {
+      items.map((item) => (
+        <a class="item" href={item.href}>
+          {item.label}
+        </a>
+      ))
+    }
+  </div>
 </nav>
 <style>
   .menu {
     display: flex;
   }
-  .isVertical {
+
+  .menu-container {
+    display: flex;
+  }
+  .isVertical .menu-container {
     flex-direction: column;
+  }
+
+  .menu-button,
+  .close-button {
+    display: none;
   }
 
   .item {
@@ -43,4 +82,66 @@ const { items, direction = "horizontal" } = Astro.props;
   .item:focus-visible {
     background-color: #ccc;
   }
+
+  @media (max-width: 767px) {
+    .supportMobile .menu-button,
+    .supportMobile .close-button {
+      appearance: none;
+      border: 0;
+      width: 44px;
+      height: 44px;
+      background: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .supportMobile .close-button {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    .supportMobile .menu-container {
+      display: none;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      width: 75%;
+      max-width: 320px;
+      min-width: 240px;
+      background-color: #fff;
+      padding: 1rem;
+      box-shadow:
+        -2px 0px 12px rgba(0, 0, 0, 0.1),
+        -1px 0px 2px rgba(0, 0, 0, 0.2);
+    }
+    .supportMobile [aria-expanded="true"] + .menu-container {
+      display: block;
+    }
+  }
 </style>
+<script define:vars={{ menuCollapseId }}>
+  document
+    .querySelectorAll(`[aria-controls=${menuCollapseId}]`)
+    .forEach((control) => {
+      const doToggle = () => {
+        const allButtons = document.querySelectorAll(
+          `[aria-controls=${menuCollapseId}]`,
+        );
+
+        const state = allButtons[0].getAttribute("aria-expanded") === "true";
+        const toggledState = state ? "false" : "true";
+
+        allButtons.forEach((button) =>
+          button.setAttribute("aria-expanded", toggledState),
+        );
+      };
+
+      control.addEventListener("click", (e) => {
+        doToggle();
+      });
+    });
+</script>
