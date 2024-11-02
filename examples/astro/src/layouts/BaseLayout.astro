@@ -1,0 +1,58 @@
+---
+import Container from "../components/Container.astro";
+import Header from "../components/Header.astro";
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const siteName = "ACME App";
+
+const { title, description } = Astro.props;
+---
+
+<html lang="en">
+  <meta charset="utf-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width" />
+  <meta name="generator" content={Astro.generator} />
+  <title>{title} | {siteName}</title>
+  <meta name="description" content={description} />
+  <body>
+    <div class="root">
+      <div class="header">
+        <Header title={siteName} />
+      </div>
+      <main>
+        <Container>
+          <slot />
+        </Container>
+      </main>
+    </div>
+  </body>
+</html>
+<style is:global>
+  :root {
+    --color-base: #111;
+    --color-primary: cornflowerblue;
+    --color-accent: #d3d3d3;
+  }
+  body {
+    margin: 0;
+    font-family: sans-serif;
+    color: var(--color-base);
+  }
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+</style>
+<style>
+  .header {
+    margin-bottom: 1rem;
+  }
+</style>

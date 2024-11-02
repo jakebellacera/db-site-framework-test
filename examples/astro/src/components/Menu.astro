@@ -1,0 +1,46 @@
+---
+import { clsx } from "clsx";
+
+interface MenuItem {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  readonly items: MenuItem[];
+  readonly direction?: "horizontal" | "vertical";
+}
+
+const { items, direction = "horizontal" } = Astro.props;
+---
+
+<nav class={clsx("menu", { isVertical: direction === "vertical" })}>
+  {
+    items.map((item) => (
+      <a class="item" href={item.href}>
+        {item.label}
+      </a>
+    ))
+  }
+</nav>
+<style>
+  .menu {
+    display: flex;
+  }
+  .isVertical {
+    flex-direction: column;
+  }
+
+  .item {
+    display: block;
+    padding: 0.5rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  .item:hover {
+    color: cornflowerblue;
+  }
+  .item:focus-visible {
+    background-color: #ccc;
+  }
+</style>

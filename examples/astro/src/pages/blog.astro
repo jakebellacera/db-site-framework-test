@@ -1,0 +1,26 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const posts = [
+  {
+    title: "First post",
+    href: "/blog/2024-11-01-first-post",
+  },
+];
+---
+
+<BaseLayout
+  title="Blog"
+  description="The official blog for the ACME App. We post about product updates, customer stories, deep dives and more."
+>
+  <h1>Blog</h1>
+  <ol>
+    {
+      posts.map((post) => (
+        <li>
+          <a href={post.href}>{post.title}</a>
+        </li>
+      ))
+    }
+  </ol>
+</BaseLayout>

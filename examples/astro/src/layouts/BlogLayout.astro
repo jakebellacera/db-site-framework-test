@@ -1,0 +1,49 @@
+---
+import MarkdownLayout from "./MarkdownLayout.astro";
+
+interface Props {
+  frontmatter: {
+    [key: string]: unknown;
+    title: string;
+    description: string;
+    pubDate: string;
+    author: string;
+  };
+}
+
+const { frontmatter } = Astro.props;
+const pubDate = new Date(Date.parse(frontmatter.pubDate));
+---
+
+<MarkdownLayout frontmatter={frontmatter}>
+  <header class="header">
+    <h1>{frontmatter.title}</h1>
+    <div class="meta">
+      <div class="meta-item">
+        By {frontmatter.author}
+      </div>
+      <div class="meta-item">
+        <time datetime={pubDate.toISOString()}
+          >Posted on {pubDate.toDateString()}</time
+        >
+      </div>
+    </div>
+  </header>
+  <slot />
+</MarkdownLayout>
+<style>
+  .header {
+    margin-bottom: 1rem;
+  }
+  .meta {
+    --spacing: 0.5rem;
+    display: flex;
+    gap: var(--spacing);
+  }
+  .meta-item + .meta-item:before {
+    display: inline-block;
+    content: "•";
+    color: var(--color-accent);
+    margin-right: var(--spacing);
+  }
+</style>
