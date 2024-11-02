@@ -1,3 +1,4 @@
 {
-  "prettier.documentSelectors": ["**/*.astro"]
+  "prettier.documentSelectors": ["**/*.astro"],
+  "html.autoCreateQuotes": false
 }
