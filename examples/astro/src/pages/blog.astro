@@ -1,26 +1,38 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import BlogPost from "../components/BlogPost.astro";
+import type { BlogPostFrontmatter } from "../postTypes";
 
-const posts = [
-  {
-    title: "First post",
-    href: "/blog/2024-11-01-first-post",
-  },
-];
+const allPosts = await Astro.glob<BlogPostFrontmatter>("./blog/*.md");
 ---
 
 <BaseLayout
-  title="Blog"
+  title="The Blog"
   description="The official blog for the ACME App. We post about product updates, customer stories, deep dives and more."
 >
-  <h1>Blog</h1>
-  <ol>
-    {
-      posts.map((post) => (
-        <li>
-          <a href={post.href}>{post.title}</a>
-        </li>
-      ))
-    }
-  </ol>
+  <h1>The Blog</h1>
+  {
+    allPosts.map((post) => {
+      const { url, frontmatter } = post;
+      const { title, author, pubDate, description } = frontmatter;
+      const postDate = new Date(Date.parse(pubDate));
+
+      return (
+        <BlogPost
+          title={title}
+          url={url}
+          author={author}
+          postDate={postDate}
+          description={description}
+        />
+      );
+    })
+  }
 </BaseLayout>
+<style>
+  .blog-post + .blog-post {
+    margin-top: 2rem;
+    border-top: 1px solid var(--color-accent);
+    padding-top: 2rem;
+  }
+</style>

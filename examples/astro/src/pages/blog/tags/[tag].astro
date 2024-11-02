@@ -1,0 +1,83 @@
+---
+import type {
+  InferGetStaticParamsType,
+  InferGetStaticPropsType,
+  GetStaticPaths,
+  MarkdownInstance,
+} from "astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import BlogPost from "../../../components/BlogPost.astro";
+import type { BlogPostFrontmatter } from "../../../postTypes";
+
+export const getStaticPaths = (async () => {
+  const allPosts = (await Astro.glob<BlogPostFrontmatter>(
+    "../*.md",
+  )) as MarkdownInstance<BlogPostFrontmatter>[];
+
+  const allTags = allPosts.reduce<string[]>((allTags, post) => {
+    const tagsToAdd =
+      post.frontmatter.tags?.reduce<string[]>((tagsToAdd, tag) => {
+        if (!allTags.includes(tag)) {
+          return [...tagsToAdd, tag];
+        }
+
+        return tagsToAdd;
+      }, []) ?? [];
+
+    return [...allTags, ...tagsToAdd];
+  }, []);
+
+  return allTags.map((tag) => {
+    return {
+      params: { tag },
+      props: { posts: allPosts },
+    };
+  });
+}) satisfies GetStaticPaths;
+
+type Params = InferGetStaticParamsType<typeof getStaticPaths>;
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { tag } = Astro.params as Params;
+const { posts } = Astro.props as Props;
+
+const filteredPosts = posts.filter((post) =>
+  post.frontmatter.tags?.includes(tag),
+);
+---
+
+<BaseLayout
+  title={`Posts tagged with "${tag}"`}
+  description="The official blog for the ACME App. We post about product updates, customer stories, deep dives and more."
+>
+  <h1>Posts tagged with "{tag}"</h1>
+  {
+    filteredPosts.map((post) => {
+      const { url, frontmatter } = post;
+      const { title, author, pubDate, description } = frontmatter as {
+        title: string;
+        author: string;
+        pubDate: string;
+        description: string;
+      };
+      const postDate = new Date(Date.parse(pubDate));
+
+      return (
+        <BlogPost
+          title={title}
+          url={url}
+          author={author}
+          postDate={postDate}
+          description={description}
+        />
+      );
+    })
+  }
+</BaseLayout>
+<style>
+  .blog-post + .blog-post {
+    margin-top: 2rem;
+    border-top: 1px solid var(--color-accent);
+    padding-top: 2rem;
+  }
+</style>

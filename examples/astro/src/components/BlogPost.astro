@@ -1,0 +1,40 @@
+---
+interface Props {
+  title: string;
+  author: string;
+  postDate: Date;
+  description: string;
+  url: string | undefined;
+}
+const { title, author, postDate, description, url } = Astro.props;
+---
+
+<div class="blog-post">
+  <h2>
+    <a href={url}>{title}</a>
+  </h2>
+  <div class="meta">
+    <div class="meta-item">By {author}</div>
+    <div class="meta-item">
+      <time datetime={postDate.toISOString()}>
+        Posted on {postDate.toDateString()}
+      </time>
+    </div>
+  </div>
+  <p>{description}</p>
+</div>
+<style>
+  .meta {
+    --spacing: 0.5rem;
+    display: flex;
+    gap: var(--spacing);
+    font-size: var(--font-size-sm);
+    color: var(--color-muted);
+  }
+  .meta-item + .meta-item:before {
+    display: inline-block;
+    content: "•";
+    color: var(--color-accent);
+    margin-right: var(--spacing);
+  }
+</style>

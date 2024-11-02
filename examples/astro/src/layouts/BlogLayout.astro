@@ -23,9 +23,9 @@ const pubDate = new Date(Date.parse(frontmatter.pubDate));
         By {frontmatter.author}
       </div>
       <div class="meta-item">
-        <time datetime={pubDate.toISOString()}
-          >Posted on {pubDate.toDateString()}</time
-        >
+        <time datetime={pubDate.toISOString()}>
+          Posted on {pubDate.toDateString()}
+        </time>
       </div>
     </div>
   </header>
@@ -39,6 +39,8 @@ const pubDate = new Date(Date.parse(frontmatter.pubDate));
     --spacing: 0.5rem;
     display: flex;
     gap: var(--spacing);
+    font-size: var(--font-size-sm);
+    color: var(--color-muted);
   }
   .meta-item + .meta-item:before {
     display: inline-block;
